@@ -1,189 +1,103 @@
 # davraf-guidelines
 
-my personal instructons and promps for ia agents
+Linee guida e istruzioni personali per agenti AI applicati a progetti .NET 10 Minimal API.
 
-Questo repository contiene un **template completo** per progetti .NET 10 Minimal API con linee guida integrate per GitHub Copilot.
-
-## 📦 Contenuto del Template
-
-La cartella `your-solution-root/` contiene tutti i file che devono essere copiati nella root di un nuovo progetto Visual Studio.
-
-### File Inclusi
-
-| File/Cartella | Scopo | Influenza Copilot |
-|---------------|-------|-------------------|
-| `.github/copilot-instructions.md` | Istruzioni principali per Copilot | ✅ SÌ - Letto automaticamente |
-| `.github/instructions/*.md` | Istruzioni modulari dettagliate | ✅ SÌ - Referenziate da Copilot |
-| `.editorconfig` | Stile di codice e naming conventions | ✅ SÌ - Influenza codice generato |
-| `Directory.Build.props` | Configurazione MSBuild centralizzata | ⚠️ Indiretto - Standard di progetto |
-| `global.json` | Versione .NET SDK | ❌ NO - Solo per build |
-| `.gitignore` | File ignorati da Git | ❌ NO - Solo per Git |
-| `.gitattributes` | Normalizzazione line endings | ❌ NO - Solo per Git |
-| `README.md` | Documentazione del progetto | ⚠️ Possibile - Copilot può leggerlo |
-
-## 🚀 Procedura di Utilizzo
-
-### 1. Crea un Nuovo Progetto Visual Studio
-
-```powershell
-# Opzione A: Crea solution vuota in Visual Studio
-# File > New > Project > Blank Solution
-
-# Opzione B: Usa dotnet CLI
-dotnet new sln -n MioProgetto
-cd MioProgetto
-dotnet new webapi -minimal -n MioProgetto.Api -o src/MioProgetto.Api
-dotnet sln add src/MioProgetto.Api
-```
-
-### 2. Copia i File del Template
-
-```powershell
-# Dalla cartella del tuo nuovo progetto
-cd C:\Path\To\MioProgetto
-
-# Copia TUTTO il contenuto di your-solution-root
-xcopy "C:\TWTCollection\Raffagli\Davraf_Guidelines\your-solution-root\*" . /E /H /I /Y
-
-# Oppure copia manualmente con Esplora File
-```
-
-**ATTENZIONE**: Assicurati di copiare anche i file nascosti (`.editorconfig`, `.gitignore`, `.gitattributes`, `.github/`)
-
-### 3. Personalizza i File
-
-#### A. `Directory.Build.props`
-
-```xml
-<PropertyGroup>
-  <!-- Aggiorna con il nome del tuo progetto -->
-  <Product>Il Mio Progetto API</Product>
-</PropertyGroup>
-```
-
-#### B. `.github/copilot-instructions.md`
-
-Opzionale: Personalizza la sezione "Naming" se usi convenzioni diverse:
-
-```markdown
-### Naming
-- Namespace: `mio_progetto.api` (aggiorna con il tuo namespace)
-```
-
-#### C. `README.md`
-
-Sostituisci il contenuto con informazioni specifiche del tuo progetto.
-
-### 4. Verifica GitHub Copilot
-
-1. Apri Visual Studio
-2. Vai su **Tools** > **Options** > **GitHub Copilot**
-3. Verifica che Copilot sia abilitato
-4. Prova a scrivere codice e verifica che Copilot suggerisca codice secondo le tue linee guida
-
-### 5. Inizia lo Sviluppo
-
-GitHub Copilot ora:
-- ✅ Seguirà le convenzioni di naming definite in `.editorconfig`
-- ✅ Userà i pattern architetturali definiti in `.github/copilot-instructions.md`
-- ✅ Genererà endpoint seguendo le 9 regole di `minimal-api-architecture.instructions.md`
-- ✅ Creerà provider database seguendo il template in `database-provider.instructions.md`
-
-## 🧪 Test del Template
-
-Per verificare che tutto funzioni:
-
-### Test 1: EditorConfig
-1. Crea una nuova classe C# in Visual Studio
-2. Visual Studio dovrebbe formattare automaticamente secondo `.editorconfig`
-3. I campi privati dovrebbero avere prefisso `_`
-
-### Test 2: Copilot Instructions
-1. Crea un nuovo file `Endpoints/TestMapping.cs`
-2. Inizia a scrivere: `public static class TestMapping`
-3. Copilot dovrebbe suggerire un extension method con il pattern corretto:
-   ```csharp
-   public static IEndpointRouteBuilder MapTestEndpoints(
-       this IEndpointRouteBuilder routes,
-       ApiVersionSet versionSet)
-   ```
-
-### Test 3: Directory.Build.props
-1. Apri le proprietà del progetto
-2. Verifica che Target Framework sia `.NET 10`
-3. Verifica che Nullable sia abilitato
-
-## 📁 Struttura Raccomandata Post-Setup
-
-Dopo aver copiato il template, la struttura dovrebbe essere:
-
-```
-MioProgetto/
-├── .github/
-│   ├── copilot-instructions.md
-│   └── instructions/
-│       ├── minimal-api-architecture.instructions.md
-│       └── database-provider.instructions.md
-├── src/
-│   └── MioProgetto.Api/
-│       ├── MioProgetto.Api.csproj
-│       ├── Program.cs
-│       ├── Endpoints/
-│       ├── Infrastructure/
-│       ├── Dto/
-│       └── Transformers/
-├── test/
-│   └── MioProgetto.Tests/
-├── .editorconfig
-├── .gitignore
-├── .gitattributes
-├── Directory.Build.props
-├── global.json
-├── MioProgetto.sln
-└── README.md
-```
-
-## ❓ FAQ
-
-### Q: Devo committare i file `.github/`?
-**A:** SÌ! Questi file devono essere in Git per essere letti da Copilot.
-
-### Q: Posso modificare le istruzioni di Copilot?
-**A:** SÌ, personalizza `.github/copilot-instructions.md` e i file in `instructions/` per il tuo progetto.
-
-### Q: Funziona con Visual Studio Code?
-**A:** SÌ, ma per VS Code è consigliabile aggiungere anche `.vscode/settings.json` con configurazioni specifiche.
-
-### Q: Funziona con Rider?
-**A:** SÌ, `.editorconfig` e GitHub Copilot funzionano anche in JetBrains Rider.
-
-### Q: Posso usare .NET 8 invece di .NET 10?
-**A:** SÌ, modifica `Directory.Build.props` e `global.json` con la versione desiderata.
-
-### Q: GitHub Copilot non segue le mie istruzioni
-**A:** Verifica che:
-   1. Il file `.github/copilot-instructions.md` sia committato in Git
-   2. Copilot sia abilitato in Visual Studio
-   3. Hai riavviato Visual Studio dopo aver aggiunto i file
-
-## 🆘 Troubleshooting
-
-### Problema: EditorConfig non viene applicato
-**Soluzione:**
-- Visual Studio: Tools > Options > Text Editor > C# > Code Style > General > Verifica che "Enable EditorConfig support" sia attivo
-- Riavvia Visual Studio
-
-### Problema: Copilot non legge le istruzioni
-**Soluzione:**
-- Verifica che il file sia in `.github/copilot-instructions.md` (non `copilot_instructions` o altre varianti)
-- Assicurati che il file sia committato in Git
-- Chiudi e riapri la solution
-
-### Problema: Build errors con Directory.Build.props
-**Soluzione:**
-- Verifica che la versione .NET specificata sia installata
-- Controlla che non ci siano conflitti con impostazioni nei file `.csproj`
+Questo repository raccoglie istruzioni, prompt e configurazioni pronte all'uso per guidare GitHub Copilot e altri agenti AI nella generazione di codice coerente con le mie convenzioni di progetto.
 
 ---
 
-*Documento aggiornato: Gennaio 2025*
+## Utilizzo come Git Submodule
+
+L'approccio consigliato è aggiungere questo repo come **submodule** nella root della solution o della working folder. Lo script `setup.ps1` crea symlink che puntano ai file del submodule, quindi un semplice `git submodule update --remote` basta per ricevere tutti gli aggiornamenti futuri.
+
+### 1. Aggiungi il submodule al progetto
+
+```powershell
+cd C:\MioProgetto
+
+git submodule add https://github.com/Davraf/davraf-guidelines.git davraf-guidelines
+```
+
+### 2. Esegui il setup (richiede privilegi amministratore per i symlink)
+
+```powershell
+.\davraf-guidelines\setup.ps1
+```
+
+Lo script crea symlink nella root del progetto che puntano al submodule:
+
+| Symlink creato | Sorgente nel submodule |
+|---|---|
+| `.editorconfig` | `davraf-guidelines/.editorconfig` |
+| `Directory.Build.props` | `davraf-guidelines/Directory.Build.props` |
+| `global.json` | `davraf-guidelines/global.json` |
+| `.gitignore` | `davraf-guidelines/.gitignore` |
+| `.gitattributes` | `davraf-guidelines/.gitattributes` |
+| `.github/` | `davraf-guidelines/.github/` |
+
+Se `.github/` esiste già, lo script collega i singoli file invece di sostituire la cartella.
+
+### 3. Personalizza (opzionale)
+
+**`Directory.Build.props`** — aggiorna il nome del prodotto:
+```xml
+<Product>Il Mio Progetto API</Product>
+```
+
+**`.github/copilot-instructions.md`** — personalizza namespace e convenzioni specifiche del progetto.
+
+### 4. Struttura risultante nel progetto host
+
+```
+MioProgetto/
+├── davraf-guidelines/       ← submodule (git repo autonomo)
+├── .github/                 ← symlink → davraf-guidelines/.github/
+│   ├── copilot-instructions.md
+│   ├── instructions/
+│   └── prompts/
+├── .editorconfig            ← symlink
+├── Directory.Build.props    ← symlink
+├── global.json              ← symlink
+├── .gitignore               ← symlink
+├── .gitattributes           ← symlink
+├── src/
+└── MioProgetto.sln
+```
+
+---
+
+## Aggiornamenti
+
+Per ricevere le ultime linee guida:
+
+```powershell
+git submodule update --remote davraf-guidelines
+```
+
+I symlink puntano già ai file aggiornati — nessuna operazione aggiuntiva necessaria.
+
+---
+
+## Contenuto del Repository
+
+| File/Cartella | Scopo | Letto da Copilot |
+|---|---|---|
+| `.github/copilot-instructions.md` | Istruzioni principali | ✅ Automaticamente |
+| `.github/instructions/*.md` | Istruzioni modulari | ✅ Referenziate |
+| `.github/prompts/*.md` | Prompt riutilizzabili | ✅ Su richiesta |
+| `.editorconfig` | Naming e stile | ✅ Influenza codice |
+| `Directory.Build.props` | Config MSBuild | ⚠️ Indiretto |
+| `global.json` | Versione .NET SDK | ❌ Solo build |
+| `setup.ps1` | Script di installazione | — |
+
+---
+
+## Prerequisiti
+
+- **Git** con supporto submodule
+- **PowerShell** con privilegi amministratore (per la creazione di symlink su Windows)
+- **GitHub Copilot** attivo in Visual Studio o VS Code
+
+---
+
+*Aggiornato: Marzo 2026*
