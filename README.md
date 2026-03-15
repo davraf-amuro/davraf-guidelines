@@ -21,7 +21,21 @@ La cartella `your-solution-root/` contiene tutti i file che devono essere copiat
 | `.gitattributes` | Normalizzazione line endings | ❌ NO - Solo per Git |
 | `README.md` | Documentazione del progetto | ⚠️ Possibile - Copilot può leggerlo |
 
-## 🚀 Procedura di Utilizzo
+## 🚀 Avvio Rapido
+
+Apri **PowerShell** ed esegui un solo comando:
+
+```powershell
+irm https://raw.githubusercontent.com/davraf-amuro/davraf-guidelines/main/New-DavrafProject.ps1 | iex
+```
+
+Lo script chiede il nome del progetto e la cartella di destinazione, copia tutti i file del template e apre la cartella in Explorer. Nessuna installazione richiesta.
+
+> **Prerequisiti:** PowerShell 5.1+, connessione internet. Git opzionale (usato se disponibile, altrimenti scarica ZIP).
+
+---
+
+## 📋 Procedura Manuale (alternativa)
 
 ### 1. Crea un Nuovo Progetto Visual Studio
 
