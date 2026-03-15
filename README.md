@@ -186,4 +186,25 @@ MioProgetto/
 
 ---
 
+## 🤖 Claude Code Skills
+
+Questo repository include anche skill per **Claude Code** nella cartella `.claude/skills/`.
+
+### `/tavolo` — Tavolo di Lavoro Multi-Agente
+
+Simula una sessione di review con 4 esperti in parallelo (Architetto, Backend, Interface, UX) che analizzano una domanda tecnica o di prodotto da angolazioni diverse.
+
+**Setup:** copia `.claude/skills/` nella tua `~/.claude/skills/` per renderla disponibile globalmente.
+
+```
+cp -r .claude/skills/tavolo ~/.claude/skills/tavolo
+```
+
+**Uso in Claude Code:**
+```
+/tavolo come strutturiamo l'autenticazione in questa Minimal API?
+```
+
+---
+
 *Documento aggiornato: Gennaio 2025*

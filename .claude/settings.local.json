@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs ls:*)",
+      "Bash(wc -l /c/Users/draff/.claude/projects/E--Davide-Progetti-davraf-guidelines/*.jsonl)"
+    ]
+  }
+}
