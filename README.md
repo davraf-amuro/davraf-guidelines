@@ -123,6 +123,7 @@ Le istruzioni sono organizzate per contesto in `.github/instructions/`:
 | `readme-structure.instructions.md` | Struttura obbligatoria di questo README |
 | `mcp-server-discovery.instructions.md` | Ricerca e creazione MCP server |
 | `code-organization.instructions.md` | Struttura classi e file, commenti obbligatori (tutti i linguaggi) |
+| `no-hardcoded-values.instructions.md` | Centralizzazione valori letterali: enum / classe statica / const / config (tutti i linguaggi) |
 | `frontend-organization.instructions.md` | Struttura componenti Vue e WPF/MVVM |
 
 ---
