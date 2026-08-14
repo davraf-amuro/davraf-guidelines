@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Edit(/.claude/skills/promote-to/**)"
+      "Edit(.claude/skills/promote-to/**)",
+      "Write(.ai/**)",
+      "Edit(.ai/**)"
     ]
   }
 }

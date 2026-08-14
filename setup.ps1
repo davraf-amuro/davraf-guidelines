@@ -343,6 +343,71 @@ if (Test-Path $claudeSkillsSrc) {
     Write-Host "  [WARN] Non trovata: .claude/skills" -ForegroundColor Yellow
 }
 
+# --- .claude/settings.json (permessi condivisi) ---
+Write-Host ""
+Write-Host ".claude/settings.json:" -ForegroundColor White
+
+$settingsSrc  = Join-Path $guidelinesDir ".claude\settings.json"
+$settingsDest = Join-Path $projectRoot   ".claude\settings.json"
+
+if (-not (Test-Path $settingsSrc)) {
+    Write-Host "  [WARN] Non trovato: .claude/settings.json" -ForegroundColor Yellow
+} else {
+    $settingsDestDir = Split-Path $settingsDest -Parent
+    if (-not (Test-Path $settingsDestDir)) {
+        New-Item -ItemType Directory -Path $settingsDestDir -Force | Out-Null
+    }
+
+    if (-not (Test-Path $settingsDest)) {
+        Copy-Item -Path $settingsSrc -Destination $settingsDest -Force
+        Write-Host "  [OK]   .claude/settings.json" -ForegroundColor Green
+    } else {
+        # Merge non distruttivo: aggiunge solo le voci permissions.allow mancanti.
+        # Le altre chiavi del file host (mcpServers, env, hooks) non vengono toccate.
+        # Additivo e idempotente: si esegue anche senza -Update.
+        $srcJson  = $null
+        $destJson = $null
+        try {
+            $srcJson  = Get-Content $settingsSrc  -Raw | ConvertFrom-Json
+            $destJson = Get-Content $settingsDest -Raw | ConvertFrom-Json
+        } catch {
+            Write-Host "  [WARN] JSON non valido - merge saltato, confronta manualmente" -ForegroundColor Yellow
+        }
+
+        if ($null -ne $srcJson -and $null -ne $destJson) {
+            if (-not $destJson.PSObject.Properties['permissions']) {
+                $destJson | Add-Member -NotePropertyName permissions -NotePropertyValue ([pscustomobject]@{ allow = @() })
+            }
+            if (-not $destJson.permissions.PSObject.Properties['allow']) {
+                $destJson.permissions | Add-Member -NotePropertyName allow -NotePropertyValue @()
+            }
+
+            $destAllow = [System.Collections.Generic.List[string]]::new()
+            foreach ($entry in @($destJson.permissions.allow)) {
+                if ($entry) { $destAllow.Add([string]$entry) }
+            }
+
+            $added = 0
+            foreach ($entry in @($srcJson.permissions.allow)) {
+                if ($entry -and -not $destAllow.Contains([string]$entry)) {
+                    $destAllow.Add([string]$entry)
+                    $added++
+                }
+            }
+
+            if ($added -gt 0) {
+                $destJson.permissions.allow = $destAllow.ToArray()
+                $settingsOut = $destJson | ConvertTo-Json -Depth 20
+                # UTF-8 senza BOM: indipendente dalla versione di PowerShell
+                [System.IO.File]::WriteAllText($settingsDest, $settingsOut, [System.Text.UTF8Encoding]::new($false))
+                Write-Host "  [UPD]  .claude/settings.json - $added voci aggiunte" -ForegroundColor Green
+            } else {
+                Write-Host "  [SKIP] .claude/settings.json - nessuna voce da aggiungere" -ForegroundColor DarkGray
+            }
+        }
+    }
+}
+
 # --- Cartella docs/ ---
 Write-Host ""
 Write-Host "Cartella docs:" -ForegroundColor White

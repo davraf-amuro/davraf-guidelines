@@ -69,6 +69,7 @@ Dopo l'esecuzione di `setup.ps1`, il tuo progetto avrà:
 | `.mcp.json` | copia (non sovrascritto) | Server MCP consigliati — non sovrascritto se già presente con contenuto diverso. Da verificare: `setup.ps1` cerca `.mcp.json` nel submodule, ma il repository committa `.mcp.example.json` (il file reale è in `.gitignore`) |
 | `.github/` | copia file per file | Istruzioni Copilot e prompt modulari |
 | `.claude/skills/` | copia | Skill Claude Code (warroom, professor, tattico, tech, ecc.) |
+| `.claude/settings.json` | copia / merge | Permessi Claude Code condivisi (es. scrittura in `.ai/`) — se il file esiste, le voci `permissions.allow` mancanti vengono aggiunte senza rimuovere quelle del progetto |
 | `docs/` | creato vuoto | Cartella destinazione documentazione generata (professor, card, onboarding) |
 | `CLAUDE.md` | generato / merge | Istruzioni per Claude Code — sezione Davraf Guidelines iniettata automaticamente |
 
@@ -390,4 +391,4 @@ Documentazione generata nella cartella `docs/`:
 
 ---
 
-*Documento aggiornato: Luglio 2026 — Revisione v2.2 — 2026-07-02 — claude-fable-5*
+*Documento aggiornato: Agosto 2026 — Revisione v2.3 — 2026-08-14 — claude-opus-5*
