@@ -34,12 +34,6 @@ Fonte unica: ``dev-cycle.instructions.md`` — Fase 0. Compila quella checklist 
 - [ ] Ho seguito le istruzioni modulari pertinenti
 - [ ] Logging strutturato e async/await usati dove serve
 
-## Verifica post-modifica (qualsiasi file)
-Dopo ogni modifica a un file:
-1. Rileggi il file modificato
-2. Confronta il contenuto con quanto richiesto
-3. Solo se corrispondono, dichiara la modifica completata
-
 ## Ciclo di sviluppo obbligatorio
 Ogni task segue il ciclo definito in ``dev-cycle.instructions.md``:
 - **Dichiara** scope e file prima di agire
@@ -72,4 +66,4 @@ In caso di blocco:
 
 > Regola assoluta: nessun `git push` senza lint clean confermato.
 
-*Template v1.7 - .NET 10 - Token-optimized for AI agents* - Last Update 2026-07-02 00:03 - claude-fable-5
+*Template v1.8 - .NET 10 - Token-optimized for AI agents* - Last Update 2026-08-19 - claude-sonnet-5 - rimossa sezione "Verifica post-modifica" duplicata di dev-cycle.instructions.md Fase 3
