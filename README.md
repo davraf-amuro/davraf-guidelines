@@ -28,4 +28,4 @@ Il submodule continua a funzionare e nessun progetto si rompe: semplicemente non
 
 ---
 
-*Repository archiviato il 2026-09-16 — contenuto migrato nella suite `dr-*`*
+*Contenuto migrato nella suite `dr-*` il 2026-09-16 — questo repository non è più mantenuto*
