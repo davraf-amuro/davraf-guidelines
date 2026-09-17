@@ -20,8 +20,8 @@ lint → build → docker → package → release
 
 | Stage | Trigger | Produce |
 |-------|---------|---------|
-| `lint` | MR, push su `main`, tag `v*.*.*` | nulla (verifica formattazione) |
-| `build` | MR, push su `main`, tag `v*.*.*` | nulla (verifica compilazione) |
+| `lint` | MR, push su `main` | nulla (verifica formattazione) |
+| `build` | MR, push su `main` | nulla (verifica compilazione) |
 | `docker` | **solo tag `v*.*.*`** | immagine sul registry |
 | `package` | **solo tag `v*.*.*`** | zip win-x64 (facoltativo) |
 | `release` | **solo tag `v*.*.*`** | GitLab Release |
@@ -31,6 +31,17 @@ Non deve produrre né immagini né artefatti. Solo un **tag `v*.*.*`** genera un
 release. Motivo: le immagini in produzione devono corrispondere 1:1 a una
 versione immutabile e tracciabile; un rebuild da branch renderebbe non
 deterministico cosa gira in prod.
+
+**`lint`/`build` NON devono girare anche su tag.** Un tag pushato sull'HEAD di
+`main` genera **due pipeline separate sullo stesso sha** (evento branch +
+evento tag): se le `rules` di `lint`/`build` includono anche `CI_COMMIT_TAG`,
+quel lavoro (già passato nella pipeline di branch) viene rieseguito
+inutilmente nella pipeline di tag. `lint`/`build` restano quindi solo su MR e
+push a `main`; il tag assume che `main` sia già validato e parte direttamente
+da `docker`/`package` (che fanno il proprio `restore`/`publish`, non
+dipendono da artefatti di `build`: `needs: []`). Conseguenza da accettare: un
+tag su un commit mai passato da una pipeline `main` (es. hotfix diretto)
+salta lint/build.
 
 Pattern tag obbligatorio (SemVer): `/^v\d+\.\d+\.\d+$/`. Applicarlo in **tutte**
 le `rules` dei job di rilascio — non usare `only: tags` generico (accetterebbe
@@ -117,8 +128,23 @@ docker-build:
 ```
 
 - `DOCKER_TLS_CERTDIR: ""` nelle `variables` (disabilita TLS tra job e dind).
-- `docker build --pull` per prendere sempre l'immagine base aggiornata.
+- `docker build --pull --provenance=false` per prendere sempre l'immagine base
+  aggiornata **e** disabilitare l'attestation manifest di BuildKit.
 - Il `Dockerfile` deve stare nella **root** del repo (`docker build .`).
+
+⚠️ **`--provenance=false` obbligatorio quando build e push sono comandi
+separati** (pattern `docker build` poi `docker tag`/`docker push` in una
+funzione tipo `tag_and_push`). Senza, BuildKit produce di default un manifest
+list con un attestation manifest il cui blob resta solo nell'image store
+locale del daemon `dind`; il successivo `docker push` fallisce con:
+
+```
+error from registry: blob unknown to registry - sha256:...
+```
+
+Sintomo: `docker build` va a buon fine, il push fallisce a metà (alcuni layer
+"Pushed", poi l'errore sopra). Il fix è disabilitare la provenance in build,
+non nel push.
 
 ---
 
@@ -186,10 +212,12 @@ Exit `0` → push consentita. Non-zero → **blocca** e correggi prima di pushar
 
 - [ ] `docker`/`package`/`release` girano solo su tag `/^v\d+\.\d+\.\d+$/`
 - [ ] Push su branch = solo `lint` + `build`
+- [ ] `lint`/`build` NON girano anche su tag (evita pipeline doppia sullo stesso sha)
+- [ ] `docker build` usa `--provenance=false` se build e push sono comandi separati
 - [ ] Ogni snippet shell inizia con `set -euo pipefail`
 - [ ] Nessun `|| echo` che maschera un push fallito
 - [ ] Push su registry interno **ed** esterno, entrambi bloccanti
 - [ ] Nome immagine minuscolo, path coerente col compose
 - [ ] Nessuna credenziale nel file (solo variabili CI predefinite / secret)
 
-*Istruzione v1.0 — GitLab CI/CD — 2026-07-21 — claude-opus-4-8 — esempi genericizzati (nessun dato interno)*
+*Istruzione v1.1 — GitLab CI/CD — 2026-09-17 — claude-sonnet-5 — esempi genericizzati (nessun dato interno)*
