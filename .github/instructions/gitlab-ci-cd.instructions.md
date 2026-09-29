@@ -92,6 +92,33 @@ Login interno nel `before_script`:
 docker login -u "$CI_REGISTRY_USER" -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
 ```
 
+⛔ **Il registry esterno NON va loggato.** "Auth: rete interna" (tabella sopra)
+significa push diretto (`docker push` / `tag_and_push`), **senza alcun**
+`docker login` verso quell'host: l'accesso è garantito dalla posizione di rete
+del runner GitLab (rete interna aziendale), non da credenziali. Non esistono —
+e non vanno create — variabili tipo `EXTERNAL_REGISTRY_USER` /
+`EXTERNAL_REGISTRY_PASSWORD` in nessun progetto Voisoft.
+
+```yaml
+# ❌ SBAGLIATO — variabili inesistenti: il job fallisce con "username is empty"
+- docker login -u "$EXTERNAL_REGISTRY_USER" -p "$EXTERNAL_REGISTRY_PASSWORD" "$EXTERNAL_REGISTRY"
+
+# ✅ CORRETTO (pattern reale — tron-2-tns/.gitlab-ci.yml, job docker-build):
+# un solo login, su $CI_REGISTRY, poi push diretto anche sul registry esterno
+- docker login -u "${CI_REGISTRY_USER}" -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
+# ... build ...
+- tag_and_push "${INTERNAL_IMAGE}" "${CI_REGISTRY_IMAGE}/${IMAGE_NAME}" "${CI_COMMIT_TAG}"
+- tag_and_push "${INTERNAL_IMAGE}" "${EXTERNAL_PREFIX}" "${CI_COMMIT_TAG}"   # nessun login qui
+```
+
+Motivo (lezione appresa): un primo tentativo di pipeline aggiungeva un
+`docker login` verso `registry.unidata.it` con
+`EXTERNAL_REGISTRY_USER`/`EXTERNAL_REGISTRY_PASSWORD` — il job falliva con
+`username is empty` perché quelle variabili non sono mai esistite in nessun
+progetto Voisoft. Verificato sul progetto gemello funzionante `tron-2-tns`:
+push riuscito sullo stesso registry esterno **senza** alcun login, grazie
+solo alla rete del runner.
+
 > Il nome host del registry esterno è un dato d'ambiente: tenerlo nelle
 > `variables` del `.gitlab-ci.yml` o in una CI variable, non genericizzato qui.
 
@@ -217,7 +244,8 @@ Exit `0` → push consentita. Non-zero → **blocca** e correggi prima di pushar
 - [ ] Ogni snippet shell inizia con `set -euo pipefail`
 - [ ] Nessun `|| echo` che maschera un push fallito
 - [ ] Push su registry interno **ed** esterno, entrambi bloccanti
+- [ ] Nessun `docker login` verso il registry esterno (auth = rete interna del runner, non credenziali; nessuna variabile `EXTERNAL_REGISTRY_USER`/`PASSWORD`)
 - [ ] Nome immagine minuscolo, path coerente col compose
 - [ ] Nessuna credenziale nel file (solo variabili CI predefinite / secret)
 
-*Istruzione v1.1 — GitLab CI/CD — 2026-09-17 — claude-sonnet-5 — esempi genericizzati (nessun dato interno)*
+*Istruzione v1.2 — GitLab CI/CD — 2026-09-29 — claude-sonnet-5 — chiarita regola auth registry esterno (nessun login, rete interna) dopo errore reale in CI*
