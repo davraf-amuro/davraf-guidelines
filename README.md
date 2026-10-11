@@ -1,6 +1,6 @@
-# davraf-guidelines — repository non più mantenuto
+# davraf-guidelines — repository archiviato
 
-> ⚠️ **Questo repository è stato sostituito dalla suite `dr-*`.** Il contenuto è stato migrato nei repository elencati sotto; qui non vengono più accettate modifiche. Per segnalazioni e richieste, apri una issue nel repository del pacchetto pertinente.
+> ⚠️ **Questo repository è archiviato (sola lettura) ed è stato sostituito dalla suite `dr-*`.** Il punto di partenza è **[davraf-amuro/dr-guidelines](https://github.com/davraf-amuro/dr-guidelines)**; il contenuto è stato migrato nei repository elencati sotto e qui non vengono più accettate modifiche. Per segnalazioni e richieste, apri una issue nel repository del pacchetto pertinente.
 
 Le linee guida personali per progetti integrati con GitHub Copilot e Claude Code vivevano in un unico repository, aggiunto ai progetti come submodule git. Oggi sono divise in pacchetti installabili singolarmente: un progetto host installa solo quelli che gli servono, tramite installer standalone e senza `.gitmodules`.
 
@@ -28,4 +28,4 @@ Il submodule continua a funzionare e nessun progetto si rompe: semplicemente non
 
 ---
 
-*Contenuto migrato nella suite `dr-*` il 2026-09-16 — questo repository non è più mantenuto*
+*Contenuto migrato nella suite `dr-*` il 2026-09-16 — repository archiviato il 2026-10-11*
